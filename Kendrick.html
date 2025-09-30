@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcours de Kendrick - Une Infographie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            border: 4px solid #00A5E3;
+            top: 20px;
+            left: -10px;
+            z-index: 1;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .calendar-month.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 165, 227, 0.5);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-gray-700">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#00A5E3] mb-2">Parcours de Kendrick</h1>
+            <p class="text-lg text-gray-600">Une visualisation chronologique des événements clés de 2022 à 2025</p>
+        </header>
+
+        <section id="overview" class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <p class="text-5xl font-bold text-[#FF5768]">5</p>
+                    <p class="text-xl font-semibold text-gray-800 mt-2">Placements distincts</p>
+                    <p class="text-sm text-gray-500">en moins de 3 mois au début</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <p class="text-5xl font-bold text-[#FF96C5]">2</p>
+                    <p class="text-xl font-semibold text-gray-800 mt-2">Signalements pour Kendrick</p>
+                    <p class="text-sm text-gray-500">sur une période d'un an</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <p class="text-5xl font-bold text-[#FFBF65]">4</p>
+                    <p class="text-xl font-semibold text-gray-800 mt-2">Visites au Nord</p>
+                    <p class="text-sm text-gray-500">maintenant le lien culturel</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis" class="mb-12">
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-center text-[#00A5E3] mb-4">Analyse des Signalements</h2>
+                    <p class="text-center text-gray-600 mb-4">Cette visualisation montre la proportion des signalements qui ont été retenus ou non, illustrant les décisions prises à chaque étape.</p>
+                    <div class="chart-container">
+                        <canvas id="signalementsChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-center text-[#00A5E3] mb-4">Types d'Événements</h2>
+                    <p class="text-center text-gray-600 mb-4">Cette charte compare la fréquence des différents types d'interventions et d'événements dans le dossier de Kendrick, soulignant la complexité du suivi.</p>
+                     <div class="chart-container">
+                        <canvas id="eventsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="calendar-view" class="mb-12 bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-3xl font-bold text-center text-[#00A5E3] mb-2">Vue Calendrier des Événements</h2>
+            <p class="text-center text-gray-600 mb-8">Cliquez sur un mois coloré pour voir le détail des événements.</p>
+            
+            <div class="space-y-6" id="calendar-grid">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">2022</h3>
+                    <div class="grid grid-cols-6 md:grid-cols-12 gap-2 text-center text-xs">
+                        <div class="p-2 rounded bg-gray-200">Jan</div><div class="p-2 rounded bg-gray-200">Fév</div><div class="p-2 rounded bg-gray-200">Mar</div><div class="p-2 rounded bg-gray-200">Avr</div><div class="p-2 rounded bg-gray-200">Mai</div><div class="p-2 rounded bg-gray-200">Juin</div><div class="p-2 rounded bg-gray-200">Juil</div>
+                        <div class="p-2 rounded bg-[#00A5E3] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2022-08">Août</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2022-09">Sep</div>
+                        <div class="p-2 rounded bg-[#FF96C5] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2022-10">Oct</div>
+                        <div class="p-2 rounded bg-[#FF96C5] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2022-11">Nov</div>
+                        <div class="p-2 rounded bg-[#00A5E3] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2022-12">Déc</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">2023</h3>
+                    <div class="grid grid-cols-6 md:grid-cols-12 gap-2 text-center text-xs">
+                        <div class="p-2 rounded bg-gray-200">Jan</div><div class="p-2 rounded bg-gray-200">Fév</div>
+                        <div class="p-2 rounded bg-[#00A5E3] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2023-03">Mar</div>
+                        <div class="p-2 rounded bg-gray-200">Avr</div><div class="p-2 rounded bg-gray-200">Mai</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2023-06">Juin</div>
+                        <div class="p-2 rounded bg-[#FF96C5] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2023-07">Juil</div>
+                        <div class="p-2 rounded bg-[#00A5E3] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2023-08">Août</div>
+                        <div class="p-2 rounded bg-gray-200">Sep</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2023-10">Oct</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2023-11">Nov</div>
+                        <div class="p-2 rounded bg-gray-200">Déc</div>
+                    </div>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">2024</h3>
+                    <div class="grid grid-cols-6 md:grid-cols-12 gap-2 text-center text-xs">
+                        <div class="p-2 rounded bg-gray-200">Jan</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2024-02">Fév</div>
+                        <div class="p-2 rounded bg-gray-200">Mar</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2024-04">Avr</div>
+                        <div class="p-2 rounded bg-[#00A5E3] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2024-05">Mai</div>
+                        <div class="p-2 rounded bg-[#00A5E3] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2024-06">Juin</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2024-07">Juil</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2024-08">Août</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2024-09">Sep</div>
+                        <div class="p-2 rounded bg-gray-200">Oct</div><div class="p-2 rounded bg-gray-200">Nov</div><div class="p-2 rounded bg-gray-200">Déc</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">2025</h3>
+                    <div class="grid grid-cols-6 md:grid-cols-12 gap-2 text-center text-xs">
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2025-01">Jan</div>
+                        <div class="p-2 rounded bg-gray-200">Fév</div>
+                        <div class="p-2 rounded bg-[#8DD7BF] text-white font-bold calendar-month cursor-pointer transition-transform duration-200" data-month="2025-03">Mar</div>
+                        <div class="p-2 rounded bg-gray-200">Avr</div><div class="p-2 rounded bg-gray-200">Mai</div><div class="p-2 rounded bg-gray-200">Juin</div><div class="p-2 rounded bg-gray-200">Juil</div><div class="p-2 rounded bg-gray-200">Août</div><div class="p-2 rounded bg-gray-200">Sep</div><div class="p-2 rounded bg-gray-200">Oct</div><div class="p-2 rounded bg-gray-200">Nov</div><div class="p-2 rounded bg-gray-200">Déc</div>
+                    </div>
+                </div>
+            </div>
+             <div id="accordion-container" class="mt-6"></div>
+        </section>
+
+        <section id="timeline">
+            <h2 class="text-3xl font-bold text-center text-[#00A5E3] mb-8">Chronologie Détaillée</h2>
+            <div class="relative border-l-4 border-[#8DD7BF] ml-4 md:ml-0">
+                
+                <div class="mb-8 ml-8 md:ml-0 relative timeline-item">
+                    <div class="md:ml-12">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <span class="font-bold text-lg text-[#00A5E3]">2022</span>
+                            <h3 class="text-xl font-semibold mt-2 mb-2">Début des Interventions</h3>
+                            <p class="text-sm text-gray-600">
+                                <strong class="block">16 août :</strong> Signalement (e1) pour C.A.A.Q.A., non retenu le 19 août.<br>
+                                <strong class="block">26 septembre :</strong> 1er signalement pour Kendrick (négligence). Placé chez Akinisie Nutaraluk.<br>
+                                <strong class="block">5 octobre :</strong> Décision : compromis pour 38 b1 i+ii+iii.<br>
+                                <strong class="block">12 octobre :</strong> Akinisie Nutaraluk veut arrêter le placement.<br>
+                                <strong class="block">10 novembre :</strong> Placement chez Diana Inukpuk.<br>
+                                <strong class="block">22 novembre :</strong> Diana Inukpuk veut arrêter le placement.<br>
+                                <strong class="block">28 novembre :</strong> Placement chez Marianne Guay/Francis.<br>
+                                <strong class="block">22 décembre :</strong> Placement chez Sandrine Berger à Trois-Rivières.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-8 ml-8 md:ml-0 relative timeline-item">
+                    <div class="md:ml-12">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <span class="font-bold text-lg text-[#00A5E3]">2023</span>
+                            <h3 class="text-xl font-semibold mt-2 mb-2">Suivi et Évaluations</h3>
+                             <p class="text-sm text-gray-600">
+                                <strong class="block">16 mars :</strong> Rencontre dans le milieu de Sandrine Berger.<br>
+                                <strong class="block">24 mars :</strong> Demande intercj au sud pour suivi et évaluation.<br>
+                                <strong class="block">29 juin :</strong> 2ème signalement pour Kendrick, non retenu le 6 juillet.<br>
+                                <strong class="block">6 juillet :</strong> Décision de retirer Kendrick de la famille Berger.<br>
+                                <strong class="block">13 juillet :</strong> Décision 38 Juge Whilelmy pour placement en famille d’accueil.<br>
+                                <strong class="block">11 août :</strong> Décision d'intégrer Kendrick en Gaspésie.<br>
+                                <strong class="block">17 août :</strong> Finalement, Kendrick reste chez Mme Berger.<br>
+                                <strong class="block">21 oct - 1 nov :</strong> Première visite positive de Kendrick au Nord (Inukjuak).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 ml-8 md:ml-0 relative timeline-item">
+                     <div class="md:ml-12">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <span class="font-bold text-lg text-[#00A5E3]">2024</span>
+                            <h3 class="text-xl font-semibold mt-2 mb-2">Mobilisation et Progrès</h3>
+                            <p class="text-sm text-gray-600">
+                                <strong class="block">26 février :</strong> Signalement pour C.A.A.Q.A., non retenu le 5 avril.<br>
+                                <strong class="block">16 mai :</strong> Inquiétudes soulevées par Lydia Cosette.<br>
+                                <strong class="block">27 mai :</strong> Suivi avec L. Cosette montre que la FF travaille aux objectifs.<br>
+                                <strong class="block">14 juin :</strong> Suivi positif sur l'atteinte des objectifs.<br>
+                                <strong class="block">18 juin :</strong> Discussion clinique AM, l'intervenante est rassurée.<br>
+                                <strong class="block">31 juil - 3 août :</strong> Deuxième visite positive de Kendrick au Nord (Inukjuak).<br>
+                                <strong class="block">20 septembre :</strong> Suivi confirmant que la FF a accompli les demandes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 ml-8 md:ml-0 relative timeline-item">
+                    <div class="md:ml-12">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <span class="font-bold text-lg text-[#00A5E3]">2025</span>
+                            <h3 class="text-xl font-semibold mt-2 mb-2">Maintien des Liens</h3>
+                            <p class="text-sm text-gray-600">
+                                <strong class="block">24 - 26 janvier :</strong> Visite positive au Nord (Inukjuak), mais absence de la mère le dernier jour.<br>
+                                <strong class="block">1 - 6 mars :</strong> Visite positive au Nord (Puvirnituq), mais la mère est retournée plus tôt à Inukjuak.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="text-center text-sm text-gray-500 mt-12">
+            <p>Cette infographie a été générée pour visualiser des données complexes de manière confidentielle et anonymisée. Basé sur des événements fournis.</p>
+        </footer>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const eventsData = {
+            '2022-08': [
+                { date: '16 août 2022', description: 'Signalement pour C.A.A.Q.A. pour méthode éducatives déraisonnables.' },
+                { date: '19 août 2022', description: 'Décision signalement C.A.A.Q.A. : non retenu.' }
+            ],
+            '2022-09': [
+                { date: '26 sept 2022', description: 'Premier signalement sur Kendrick pour néligence. Placement avec Akinisie Nutaraluk.' }
+            ],
+            '2022-10': [
+                { date: '5 oct 2022', description: 'Décision sur signalement = compromis pour 38 b1 i + ii + iii.' },
+                { date: '12 oct 2022', description: 'Akinisie Nutaraluk veut arrêter le placement.' },
+                { date: '26 oct 2022', description: 'Appel aux communautés autochtones.' }
+            ],
+            '2022-11': [
+                { date: '10 nov 2022', description: 'Kendrick est mtn avec Diana Inukpuk.' },
+                { date: '22 nov 2022', description: 'Diana Inukpuk veut arrêter le placement.' },
+                { date: '28 nov 2022', description: 'Kendrick est mtn avec Marianne Guay/Francis.' }
+            ],
+            '2022-12': [
+                { date: '8 dec 2022', description: 'Comité de plan de vie et plusieurs démarches.' },
+                { date: '22 dec 2022', description: 'Placement avec Sandrine Berger à Trois Rivières.' }
+            ],
+            '2023-03': [
+                { date: '16 mars 2023', description: 'Rencontre dans le milieu de Sandrine Berger.' },
+                { date: '24 mars 2023', description: 'Demande intercj au sud pour suivi et évaluation.' }
+            ],
+            '2023-06': [
+                { date: '26 juin 2023', description: 'Deuxième signalement pour Kendrick + C.A.A.Q.A.' }
+            ],
+            '2023-07': [
+                { date: '6 juil 2023', description: 'Signalement non retenu. Décision de retirer Kendrick de la famille Berger.' },
+                { date: '13 juil 2023', description: 'Décision 38 Juge Whilelmy pour placement en FA.' }
+            ],
+             '2023-08': [
+                { date: '11 août 2023', description: 'Décision d’intégrer Kendrick dans FF en Gaspésie.' },
+                { date: '17 août 2023', description: 'Finalement Kendrick va rester dans FF de Sandrine Berger.' }
+            ],
+            '2023-10': [
+                { date: '21 oct 2023', description: 'Début de la visite de Kendrick au Nord (Inukjuak).' }
+            ],
+            '2023-11': [
+                { date: '1 nov 2023', description: 'Fin de la visite de Kendrick au Nord. Visite positive.' }
+            ],
+             '2024-02': [
+                { date: '26 fév 2024', description: 'Signalement pour C.A.A.Q.A. dans le milieu de Sandrine Berger.' }
+            ],
+            '2024-04': [
+                { date: '5 avr 2024', description: 'Décision signalement pour C.A.A.Q.A. = non retenu.' }
+            ],
+            '2024-05': [
+                { date: '16 mai 2024', description: 'Inquiétudes soulevées par rapport à Mme Berger.' },
+                { date: '27 mai 2024', description: 'Suivi avec Lydia Cosette, travail sur les objectifs.' },
+                { date: '29 mai 2024', description: 'Annie Samisack va être évaluée comme potentielle FF.' }
+            ],
+            '2024-06': [
+                { date: '14 juin 2024', description: 'Suivi positif avec Lydia Cosette sur atteinte des objectifs.' },
+                { date: '18 juin 2024', description: 'Discussion clinique AM, l\'AM est rassurée.' }
+            ],
+            '2024-07': [
+                { date: '31 juil 2024', description: 'Début de la visite de Kendrick au Nord (Inukjuak).' }
+            ],
+            '2024-08': [
+                { date: '3 août 2024', description: 'Fin de la visite de Kendrick au Nord. Visite positive.' }
+            ],
+             '2024-09': [
+                { date: '20 sept 2024', description: 'Suivi avec Lydia Cosette. FF a accompli tout ce qui avait été demandé.' }
+            ],
+            '2025-01': [
+                { date: '24-26 jan 2025', description: 'Visite de Kendrick au Nord (Inukjuak). Positive mais mère absente le dernier jour.' }
+            ],
+            '2025-03': [
+                { date: '1-6 mars 2025', description: 'Visite de Kendrick au Nord (Puvirnituq). Positive mais mère retournée plus tôt.' }
+            ]
+        };
+
+        const calendarMonths = document.querySelectorAll('.calendar-month');
+        const accordionContainer = document.getElementById('accordion-container');
+        let currentAccordion = null;
+
+        calendarMonths.forEach(monthEl => {
+            monthEl.addEventListener('click', () => {
+                const monthKey = monthEl.dataset.month;
+                
+                if (currentAccordion && currentAccordion.dataset.month === monthKey) {
+                    currentAccordion.style.maxHeight = 0;
+                    currentAccordion.classList.remove('p-4');
+                    monthEl.classList.remove('active');
+                    currentAccordion = null;
+                    return;
+                }
+
+                calendarMonths.forEach(el => el.classList.remove('active'));
+                monthEl.classList.add('active');
+
+                const events = eventsData[monthKey];
+                let content = '';
+                if (events && events.length > 0) {
+                    content = '<ul class="list-disc list-inside space-y-2">';
+                    events.forEach(event => {
+                        content += `<li><strong class="font-semibold">${event.date}:</strong> ${event.description}</li>`;
+                    });
+                    content += '</ul>';
+                }
+
+                if(currentAccordion) {
+                    currentAccordion.style.maxHeight = 0;
+                    currentAccordion.classList.remove('p-4');
+                }
+
+                accordionContainer.innerHTML = `
+                    <div data-month="${monthKey}" class="accordion-content bg-blue-50 border border-blue-200 rounded-lg">
+                        ${content}
+                    </div>`;
+                
+                const newAccordion = accordionContainer.querySelector('.accordion-content');
+                
+                setTimeout(() => {
+                    newAccordion.classList.add('p-4');
+                    newAccordion.style.maxHeight = newAccordion.scrollHeight + "px";
+                    currentAccordion = newAccordion;
+                }, 10);
+            });
+        });
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: { size: 14, family: 'Inter' }
+                    }
+                },
+                tooltip: {
+                    callbacks: { title: tooltipTitleCallback },
+                    bodyFont: { family: 'Inter' },
+                    titleFont: { family: 'Inter' }
+                }
+            }
+        };
+        
+        const ctxSignalements = document.getElementById('signalementsChart').getContext('2d');
+        new Chart(ctxSignalements, {
+            type: 'doughnut',
+            data: {
+                labels: ['Non Retenu', 'Retenu (Compromis)'],
+                datasets: [{
+                    label: 'Décision des Signalements',
+                    data: [3, 1],
+                    backgroundColor: ['#FF96C5', '#00A5E3'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 3
+                }]
+            },
+            options: { ...commonChartOptions }
+        });
+
+        const ctxEvents = document.getElementById('eventsChart').getContext('2d');
+        new Chart(ctxEvents, {
+            type: 'bar',
+            data: {
+                labels: ['Signalements Kendrick', 'Placements', 'Visites au Nord', 'Décisions / Suivis'],
+                datasets: [{
+                    label: 'Fréquence par type',
+                    data: [2, 5, 4, 10],
+                    backgroundColor: ['#FF5768', '#FFBF65', '#8DD7BF', '#00A5E3'],
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                ...commonChartOptions,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+
